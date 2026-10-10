@@ -259,6 +259,9 @@ function search(dic, word) {
         word2 = word.substring(0, word.length - 1);
     }
     
+    var word3 = word + "-";
+    var word4 = "-" + word;
+    
     for (var i = 0; i < dic.length; i++) {
         if (word.length == 1 && dic[i].indexOf(word) == 0) {
             next_char = dic[i].substring(word.length, word.length + 1)
@@ -279,6 +282,12 @@ function search(dic, word) {
             // console.log(dic[i]);
             // console.log(i);
             result.push(score(word, dic[i]));
+            continue;
+        }
+
+        if (dic[i].indexOf(word3) >= 0 || dic[i].indexOf(word4) >= 0) {
+            result.push(score(word, dic[i]));
+            // console.log(i + " " + dic[i]);
             continue;
         }
 
