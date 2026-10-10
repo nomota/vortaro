@@ -252,47 +252,38 @@ function score(word, entry) {
 function search(dic, word) {
     word = word.trim();
     var result = new Array();
-    var found = new Array();
-
-    for (var i = 0; i < dic.length; i++) {
-        if (word.length == 1) { //한글자 단어 이면, 맨 처음에 매칭 되는 것만 허용
-            if (dic[i].indexOf(word) == 0) {
-                next_char = dic[i].substring(word.length, word.length + 1)
-                if ("- \t?!.,[]()/123456789".indexOf(next_char) >= 0) { //정확히 한글자가 매칭될때만 허용 
-                    result.push(score(word, dic[i]));
-                    found.push(i);
-                    // console.log(i + " " + dic[i]);
-                }
-            }
-        } else { // 두 글자 이상일 때
-            if (dic[i].indexOf(word) >= 0) {
-                result.push(score(word, dic[i]));
-                found.push(i);
-                // console.log(i + " " + dic[i]);
-            }
-        }
-    }
-    // console.log("a");
-    // console.log(found.length);
-
+    
     var suffix = word.substring(word.length - 1, word.length);
+    var word2 = "";
     if (word.length > 2 && "aeiou-/".indexOf(suffix) >= 0) {
-        var word2 = word.substring(0, word.length - 1);
-        // console.log(word2);
-        for (var i = 0; i < dic.length; i++) {
-            if (!found.includes(i)) {
-                if (dic[i].indexOf(word2) >= 0) {
-                    // console.log(dic[i]);
-                    // console.log(i);
-                    result.push(score(word, dic[i]));
-                    found.push(i);
-                }
-            }
-            else {
-                // console.log(dic[i]);
-                // console.log(i);
+        word2 = word.substring(0, word.length - 1);
+    }
+    
+    for (var i = 0; i < dic.length; i++) {
+        if (word.length == 1 && dic[i].indexOf(word) == 0) {
+            next_char = dic[i].substring(word.length, word.length + 1)
+            if ("- \t?!.,[]()/123456789".indexOf(next_char) >= 0) { //정확히 한글자가 매칭될때만 허용 
+                result.push(score(word, dic[i]));
+                // console.log(i + " " + dic[i]);
+                continue;
             }
         }
+        
+        if (dic[i].indexOf(word) >= 0) {
+            result.push(score(word, dic[i]));
+            // console.log(i + " " + dic[i]);
+            continue;
+        }
+        
+        if (dic[i].indexOf(word2) >= 0) {
+            // console.log(dic[i]);
+            // console.log(i);
+            result.push(score(word, dic[i]));
+            continue;
+        }
+
+        // console.log(dic[i]);
+        // console.log(i);
     }
     // console.log("b");
 
