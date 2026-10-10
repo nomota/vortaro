@@ -26,5 +26,3 @@ http://vortaro.esperanto.or.kr
 
 ## 저작권 License
 이 사전의 저작권은 CC-BY-SA 4.0을 따릅니다.
-
-test20261011
