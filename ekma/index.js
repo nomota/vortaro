@@ -1,3 +1,5 @@
+// ekma/index.js 
+
 function E(e) { return document.getElementById(e); }
 
 function compress(original_string) {
@@ -53,6 +55,7 @@ function call_ajax_text_get(url, parameters, callback) {
 }
 
 function cxapelo(v) {
+    v = v.trim();
     if (v.length > 100) { return v.subtring(0, 100); }
     v = v.replace("cx", "ĉ").replace("gx", "ĝ").replace("hx", "ĥ");
     v = v.replace("jx", "ĵ").replace("sx", "ŝ").replace("ux", "ŭ");
@@ -76,6 +79,7 @@ var DIC_ENG_ESP = null;
 var first = 1;
 
 function klaku_vorto(v) {
+    v = v.trim();
     if (v == "") return;
 
     if (DIC == null) {
@@ -108,6 +112,7 @@ function klaku_vorto(v) {
 }
 
 function click_word(v) {
+    v = v.trim();
     if (v == "") return;
 
     if (DIC_ENG_ESP == null) {
@@ -140,6 +145,7 @@ function click_word(v) {
 }
 
 function has_cxapelon(v) {
+    v = v.trim();
     var X = "xX^h";
     for (var i = 0; i < v.length; i++) {
         if (X.indexOf(v.charAt(i)) >= 0) {
@@ -162,6 +168,8 @@ function chapeligo() {
 }
 
 function highlight(lines, vorto) {
+    vorto = vorto.trim();
+    if (vorto == "") return lines;
     var new_lines = new Array();
 
     var suffix = vorto.substring(vorto.length - 1, vorto.length);
@@ -182,40 +190,6 @@ function highlight(lines, vorto) {
         }
         new_lines[x] = new_lines[x].split(vorto).join("<font color=blue><b>" + vorto + "</b></font>");
         new_lines[x] = "<b>" + new_lines[x].replace("\t", "</b>&nbsp;&nbsp;") + "<hr>";
-
-        // if (new_lines[x].indexOf("<G_1>") >= 0) {
-        //     new_lines[x] = new_lines[x].replace("<G_1>", "<B><font color=green size=-1>[G1]</font></B>");
-        // }
-        // if (new_lines[x].indexOf("<G_2>") >= 0) {
-        //     new_lines[x] = new_lines[x].replace("<G_2>", "<B><font color=green size=-1>[G2]</font></B>");
-        // }
-        // if (new_lines[x].indexOf("<G_3>") >= 0) {
-        //     new_lines[x] = new_lines[x].replace("<G_3>", "<B><font color=green size=-1>[G3]</font></B>");
-        // }
-        // if (new_lines[x].indexOf("<G_4>") >= 0) {
-        //     new_lines[x] = new_lines[x].replace("<G_4>", "<B><font color=green size=-1>[G4]</font></B>");
-        // }
-        // if (new_lines[x].indexOf("<G_5>") >= 0) {
-        //     new_lines[x] = new_lines[x].replace("<G_5>", "<B><font color=green size=-1>[G5]</font></B>");
-        // }
-        // if (new_lines[x].indexOf("<G_6>") >= 0) {
-        //     new_lines[x] = new_lines[x].replace("<G_6>", "<B><font color=green size=-1>[G6]</font></B>");
-        // }
-        // if (new_lines[x].indexOf("<G_7>") >= 0) {
-        //     new_lines[x] = new_lines[x].replace("<G_7>", "<B><font color=green size=-1>[G7]</font></B>");
-        // }
-        // if (new_lines[x].indexOf("<G_8>") >= 0) {
-        //     new_lines[x] = new_lines[x].replace("<G_8>", "<B><font color=green size=-1>[G8]</font></B>");
-        // }
-        // if (new_lines[x].indexOf("<G_9>") >= 0) {
-        //     new_lines[x] = new_lines[x].replace("<G_9>", "<B><font color=green size=-1>[G9]</font></B>");
-        // }
-        // if (new_lines[x].indexOf("<O_A>") >= 0) {
-        //     new_lines[x] = new_lines[x].replace("<O_A>", "<B><font color=green size=-1>[OA]</font></B>");
-        // }
-        // if (new_lines[x].indexOf("<G_Y>") >= 0) {
-        //     new_lines[x] = new_lines[x].replace("<G_Y>", "");
-        // }
     }
 
     return new_lines;
@@ -232,6 +206,10 @@ function is_separator(c) {
 }
 
 function score(word, entry) {
+    word = word.trim();
+    if (word == "") {
+        return "{10000}" + entry;
+    }
     var score = 0;
 
     var suffix = word.substring(word.length - 1, word.length);
@@ -272,23 +250,24 @@ function score(word, entry) {
 }
 
 function search(dic, word) {
+    word = word.trim();
     var result = new Array();
     var found = new Array();
 
     for (var i = 0; i < dic.length; i++) {
-        if (word.length == 0) { //한글자 단어 이면, 맨 처음에 매칭 되는 것만 허용
+        if (word.length == 1) { //한글자 단어 이면, 맨 처음에 매칭 되는 것만 허용
             if (dic[i].indexOf(word) == 0) {
                 next_char = dic[i].substring(word.length, word.length + 1)
                 if ("- \t?!.,[]()/123456789".indexOf(next_char) >= 0) { //정확히 한글자가 매칭될때만 허용 
-                    result[result.length] = score(word, dic[i]);
-                    found[found.length] = i;
+                    result.push(score(word, dic[i]));
+                    found.push(i);
                     // console.log(i + " " + dic[i]);
                 }
             }
         } else { // 두 글자 이상일 때
             if (dic[i].indexOf(word) >= 0) {
-                result[result.length] = score(word, dic[i]);
-                found[found.length] = i;
+                result.push(score(word, dic[i]));
+                found.push(i);
                 // console.log(i + " " + dic[i]);
             }
         }
@@ -301,18 +280,12 @@ function search(dic, word) {
         var word2 = word.substring(0, word.length - 1);
         // console.log(word2);
         for (var i = 0; i < dic.length; i++) {
-            var found_yes = false;
-            for (var j = 0; j < found.length; j++) {
-                if (found[j] == i) {
-                    found_yes = true;
-                    break
-                }
-            }
-            if (!found_yes) {
+            if (!found.includes(i)) {
                 if (dic[i].indexOf(word2) >= 0) {
                     // console.log(dic[i]);
                     // console.log(i);
-                    result[result.length] = score(word, dic[i]);
+                    result.push(score(word, dic[i]));
+                    found.push(i);
                 }
             }
             else {
@@ -327,7 +300,7 @@ function search(dic, word) {
     result.reverse();
 
     for (var i = 0; i < result.length; i++) {
-        result[i] = result[i].substring(7);
+        result[i] = result[i].substring(7); // remove {10000}
     }
     // console.log("c");
     // console.log(result.length);
