@@ -22,7 +22,6 @@ function uncompress(binaryData) {
 }
 
 
-
 function call_ajax_text_get(url, parameters, callback) {
     var req = false;
     try {
@@ -174,7 +173,7 @@ function highlight(lines, vorto) {
 
     var suffix = vorto.substring(vorto.length - 1, vorto.length);
     if (vorto.length > 2 && "aeiou-/".indexOf(suffix) >= 0) {
-        vorto = vorto.substring(0, vorto.length - 1);
+        vorto2 = vorto.substring(0, vorto.length - 1);
     }
 
     for (var i = 0; i < lines.length; i++) {
@@ -188,7 +187,32 @@ function highlight(lines, vorto) {
         if (row[1] == "GX") {
             new_lines[x] = row[0] + "\t" + row[2];
         }
-        new_lines[x] = new_lines[x].split(vorto).join("<font color=blue><b>" + vorto + "</b></font>");
+        var new_lines_x = new Array();
+        var pi = 0;
+        for (var i = 0; i < new_lines[x].length; i++) {
+            if (new_lines[x].indexOf(vorto, i) == i) {
+                var prefix = new_lines[x].substring(pi,i-pi);
+                new_lines_x.push(prefix);
+                new_lines_x.push("<font color=blue><b>");
+                new_lines_x.push(vorto);
+                new_lines_x.push("</b></font>")
+                
+                pi = i+vorto.length;
+                continue;
+            }
+            if (new_lines[x].indexOf(vorto2, i) == i) {
+                var prefix = new_lines[x].substring(pi,i-pi);
+                new_lines_x.push(prefix);
+                new_lines_x.push("<font color=blue><b>");
+                new_lines_x.push(vorto2);
+                new_lines_x.push("</b></font>")
+                
+                pi = i+vorto2.length;
+                continue;
+            }
+        }
+        new_lines_x.push(new_lines[x].substring(pi));
+        new_lines[x] = new_lines_x.join("");
         new_lines[x] = "<b>" + new_lines[x].replace("\t", "</b>&nbsp;&nbsp;") + "<hr>";
     }
 
